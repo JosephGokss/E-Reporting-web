@@ -6,6 +6,8 @@
     <title>Dashboard | E-Report Fasilitas Sekolah</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://kit.fontawesome.com/41ede40f14.js" crossorigin="anonymous"></script>
     <style>
         :root {
             --primary-color: #4361ee;
@@ -13,18 +15,35 @@
             --success-color: #06d6a0;
             --warning-color: #ffd60a;
             --danger-color: #ef476f;
+            --bg-light: #f8f9fa;
+            --bg-dark: #1a1d29;
+            --card-light: #ffffff;
+            --card-dark: #252836;
+            --text-light: #2d3748;
+            --text-dark: #e2e8f0;
         }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            transition: all 0.3s ease;
+            height: 100vh;
+        }
+        
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1d29 0%, #2d1b3d 100%);
         }
         
         .navbar {
             background: rgba(255, 255, 255, 0.95) !important;
             backdrop-filter: blur(10px);
             box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .dark-mode .navbar {
+            background: rgba(37, 40, 54, 0.95) !important;
         }
         
         .navbar-brand {
@@ -33,18 +52,14 @@
             font-size: 1.5rem;
         }
         
-        .hero-section {
-            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("assets/img/idn-jonggol-1.png");
-            height: 100vh; 
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: cover;
-            position: relative;
-            display: flex;
-            justify-content: center; 
-            align-items: center; 
-            text-align: center; 
+        .dark-mode .navbar .nav-link {
+            color: var(--text-dark) !important;
         }
+        
+        .dark-mode .navbar .nav-link.active {
+            color: var(--primary-color) !important;
+        }
+        
         .stat-card {
             background: white;
             border-radius: 15px;
@@ -54,7 +69,29 @@
             border: none;
             position: relative;
             overflow: hidden;
+            animation: slideUp 0.6s ease;
         }
+        
+        .dark-mode .stat-card {
+            background: var(--card-dark);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
         
         .stat-card::before {
             content: '';
@@ -69,6 +106,10 @@
         .stat-card:hover {
             transform: translateY(-10px);
             box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        
+        .dark-mode .stat-card:hover {
+            box-shadow: 0 15px 40px rgba(67, 97, 238, 0.3);
         }
         
         .stat-number {
@@ -88,6 +129,10 @@
             margin-top: 0.5rem;
         }
         
+        .dark-mode .stat-label {
+            color: #94a3b8;
+        }
+        
         .stat-icon {
             font-size: 3rem;
             opacity: 0.1;
@@ -96,12 +141,56 @@
             top: 20px;
         }
         
+        .chart-container {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-top: 2rem;
+            animation: slideUp 0.8s ease;
+        }
+        
+        .dark-mode .chart-container {
+            background: var(--card-dark);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .chart-title {
+            font-weight: 700;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+        
+        .dark-mode .chart-title {
+            color: var(--text-dark);
+        }
+        
         .btn-custom {
             padding: 12px 30px;
             border-radius: 50px;
             font-weight: 600;
             transition: all 0.3s ease;
             border: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-custom::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn-custom:hover::before {
+            width: 300px;
+            height: 300px;
         }
         
         .btn-primary-custom {
@@ -135,6 +224,12 @@
             font-weight: 700;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
             margin-bottom: 2rem;
+            animation: fadeIn 0.8s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         
         .action-buttons {
@@ -143,6 +238,97 @@
             padding: 2rem;
             border-radius: 15px;
             margin-top: 2rem;
+            animation: slideUp 1s ease;
+        }
+        
+        .dark-mode-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            box-shadow: 0 10px 30px rgba(67, 97, 238, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .dark-mode-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 15px 40px rgba(67, 97, 238, 0.6);
+        }
+        
+        .recent-reports {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-top: 2rem;
+            animation: slideUp 1.2s ease;
+        }
+        
+        .dark-mode .recent-reports {
+            background: var(--card-dark);
+        }
+        
+        .recent-item {
+            padding: 1rem;
+            border-left: 4px solid var(--primary-color);
+            margin-bottom: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .dark-mode .recent-item {
+            background: #6e779b;
+        }
+        
+        .recent-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        
+        .progress-ring-circle {
+            transition: stroke-dashoffset 1s ease;
+        }
+        
+        .completion-rate {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        
+        .completion-number {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--success-color), #00b4d8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+            .hero-section {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("assets/img/Landscape_Architecture_Building\,_Lincoln_University_Campus\,_New_Zealand_16.jpg");
+            height: 200vh; 
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            position: relative;
+            display: flex;
+            justify-content: center; 
+            align-items: center; 
+            text-align: center; 
         }
     </style>
 </head>
@@ -215,6 +401,41 @@
                 </div>
             </div>
 
+            <!-- Charts -->
+            <div class="row g-4">
+                <div class="col-md-8">
+                    <div class="chart-container">
+                        <h4 class="chart-title"><i class="bi bi-bar-chart"></i> Distribusi Status Laporan</h4>
+                        <canvas id="statusChart" height="100"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="chart-container">
+                        <h4 class="chart-title text-center"><i class="bi bi-pie-chart"></i> Tingkat Penyelesaian</h4>
+                        <div class="completion-rate">
+                            <svg width="200" height="200">
+                                <circle class="progress-ring" stroke="#e9ecef" stroke-width="20" fill="transparent" r="80" cx="100" cy="100" />
+                                <circle id="progressCircle" class="progress-ring progress-ring-circle" stroke="url(#gradient)" stroke-width="20" fill="transparent" r="80" cx="100" cy="100" stroke-dasharray="502.65" stroke-dashoffset="502.65" />
+                                <defs>
+                                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#06d6a0" />
+                                        <stop offset="100%" style="stop-color:#00b4d8" />
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                            <div class="completion-number" id="completionRate">0%</div>
+                            <p class="text-muted">Laporan Selesai</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Reports -->
+            <div class="recent-reports">
+                <h4 class="chart-title"><i class="bi bi-clock-history"></i> Laporan Terbaru</h4>
+                <div id="recentReportsList"></div>
+            </div>
+
             <div class="action-buttons text-center">
                 <a href="add-report.html" class="btn btn-custom btn-primary-custom me-2 mb-2">
                     <i class="bi bi-plus-circle"></i> Tambah Laporan Baru
@@ -226,8 +447,60 @@
         </div>
     </main>
     </div>
+
+        <!-- Dark Mode Toggle -->
+    <button class="dark-mode-toggle" id="darkModeToggle" title="Toggle Dark Mode">
+        <i class="bi bi-moon-fill"></i>
+    </button>
+
+    <!-- Footer -->
+    <div class="container">
+         <footer class="py-5">
+             <div class="row">
+                 <div class="col-6 col-md-2 mb-3">
+                     <h5>Section</h5>
+        <ul class="nav flex-column">
+           <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Home</a></li>
+            <li class="nav-item mb-2"><a href="reports.html" class="nav-link p-0 text-body-secondary">All reports</a></li>
+             <li class="nav-item mb-2"><a href="add-report.html" class="nav-link p-0 text-body-secondary">Add Reports</a></li>
+              <li class="nav-item mb-2"><a href="report-detail.html" class="nav-link p-0 text-body-secondary">Reports Detail</a></li>
+               <li class="nav-item mb-2"><a href="edit-report.html" class="nav-link p-0 text-body-secondary">Edit Reports</a></li>
+               </ul>
+               </div>
+                <div class="col-6 col-md-2 mb-3">
+                           </div>
+                            <div class="col-6 col-md-2 mb-3">
+                                                     </div>
+                                                      <div class="col-md-5 offset-md-1 mb-3">
+                                                        <form>
+                                                             <h5>Subscribe to our newsletter</h5>
+                                                              <p>Monthly digest of what's new and exciting from us.</p>
+                                                               <div class="d-flex flex-column flex-sm-row w-100 gap-2">
+                                                                 <label for="newsletter1" class="visually-hidden">Email address</label>
+                                                                  <input id="newsletter1" type="email" class="form-control" placeholder="Email address">
+                                                                   <button class="btn btn-primary" type="button">Subscribe</button>
+                                                                 </div>
+                                                                 </form>
+                    </div>
+                </div> 
+            <div class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top">
+             <p>© 2025 Company, Inc. All rights reserved.</p>
+                <ul class="list-unstyled d-flex">
+        <li class="ms-3"><a class="link-body-emphasis" href="https://www.instagram.com/zaenthh/" aria-label="Instagram"><i class="fa-brands fa-instagram"></i><svg class="bi" width="24" height="24"><use xlink:href="#instagram"></use></svg></a></li>
+        <li class="ms-3"><a class="link-body-emphasis" href="https://www.facebook.com/profile.php?id=61579628405236" aria-label="Facebook"><i class="fa-brands fa-square-facebook"></i><svg class="bi" width="24" height="24" aria-hidden="true"><use xlink:href="#facebook"></use></svg></li>
+        <li class="ms-3"><a class="link-body-emphasis" href="https://www.linkedin.com/in/yusuf-idn-36714a37a/" aria-label="LinkedIn"><i class="fa-brands fa-square-linkedin"></i></i><svg class="bi" width="24" height="24" aria-hidden="true"><use xlink:href="#linkedIn"></use></svg></li>
+        <li class="ms-3"><a class="link-body-emphasis" href="https://github.com/JosephGokss" aria-label="Github"><i class="fa-brands fa-square-github"></i></i><svg class="bi" width="24" height="24" aria-hidden="true"><use xlink:href="#Github"></use></svg></li>
+                </ul>
+            </div>
+        </footer>
+    </div>
+
+    
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        let statusChart;
+        
         function updateDashboard() {
             const reports = JSON.parse(localStorage.getItem('reports')) || [];
             const total = reports.length;
@@ -235,25 +508,150 @@
             const proses = reports.filter(r => r.status === "Diproses").length;
             const selesai = reports.filter(r => r.status === "Selesai").length;
             
-            document.getElementById('totalReports').innerText = total;
-            document.getElementById('newReports').innerText = baru;
-            document.getElementById('processReports').innerText = proses;
-            document.getElementById('doneReports').innerText = selesai;
+            // Animate numbers
+            animateValue('totalReports', 0, total, 1000);
+            animateValue('newReports', 0, baru, 1000);
+            animateValue('processReports', 0, proses, 1000);
+            animateValue('doneReports', 0, selesai, 1000);
+            
+            // Update charts
+            updateStatusChart(baru, proses, selesai);
+            updateCompletionRate(total, selesai);
+            updateRecentReports(reports);
         }
         
-        updateDashboard();
+        function animateValue(id, start, end, duration) {
+            const element = document.getElementById(id);
+            const range = end - start;
+            const increment = range / (duration / 16);
+            let current = start;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                    current = end;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(current);
+            }, 16);
+        }
         
-        // Update dashboard setiap kali halaman di-focus
+        function updateStatusChart(baru, proses, selesai) {
+            const ctx = document.getElementById('statusChart').getContext('2d');
+            
+            if (statusChart) {
+                statusChart.destroy();
+            }
+            
+            statusChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Baru', 'Diproses', 'Selesai'],
+                    datasets: [{
+                        label: 'Jumlah Laporan',
+                        data: [baru, proses, selesai],
+                        backgroundColor: [
+                            'rgba(239, 71, 111, 0.8)',
+                            'rgba(255, 214, 10, 0.8)',
+                            'rgba(6, 214, 160, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(239, 71, 111, 1)',
+                            'rgba(255, 214, 10, 1)',
+                            'rgba(6, 214, 160, 1)'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 1500,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+        }
+        
+        function updateCompletionRate(total, selesai) {
+            const percentage = total > 0 ? Math.round((selesai / total) * 100) : 0;
+            const circle = document.getElementById('progressCircle');
+            const circumference = 2 * Math.PI * 80;
+            const offset = circumference - (percentage / 100) * circumference;
+            
+            setTimeout(() => {
+                circle.style.strokeDashoffset = offset;
+            }, 100);
+            
+            animateValue('completionRate', 0, percentage, 1500);
+            document.getElementById('completionRate').textContent = percentage + '%';
+        }
+        
+        function updateRecentReports(reports) {
+            const container = document.getElementById('recentReportsList');
+            const sortedReports = reports.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+            
+            if (sortedReports.length === 0) {
+                container.innerHTML = '<p class="text-muted text-center">Belum ada laporan</p>';
+                return;
+            }
+            
+            container.innerHTML = sortedReports.map(r => {
+                const statusColors = {
+                    'Baru': 'danger',
+                    'Diproses': 'warning',
+                    'Selesai': 'success'
+                };
+                const date = new Date(r.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+                
+                return `
+                    <div class="recent-item">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong>${r.name}</strong>
+                                <br>
+                                <small class="text-muted"><i class="bi bi-calendar3"></i> ${date}</small>
+                            </div>
+                            <span class="badge bg-${statusColors[r.status]}">${r.status}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Dark Mode Toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+        
+        if (isDarkMode) {
+            document.body.classList.add('dark-mode');
+            darkModeToggle.innerHTML = '<i class="bi bi-sun-fill"></i>';
+        }
+        
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDark);
+            darkModeToggle.innerHTML = isDark ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-fill"></i>';
+        });
+        
+        updateDashboard();
         window.addEventListener('focus', updateDashboard);
     </script>
-<div class="container">
-     <footer class="py-3 my-4"> 
-        <ul class="nav justify-content-center border-bottom pb-3 mb-3"> 
-            <li class="nav-item"><a href="https://www.instagram.com/zaenthh/" class="nav-link px-2 text-body-secondary"><img src="assets/img/instagram.svg" alt=""></a></li>
-            <li class="nav-item"><a href="https://www.facebook.com/profile.php?id=61579628405236" class="nav-link px-2 text-body-secondary"><img src="assets/img/facebook.svg" alt=""></a></li>
-            <li class="nav-item"><a href="https://www.linkedin.com/in/yusuf-idn-36714a37a/" class="nav-link px-2 text-body-secondary"><img src="assets/img/linkedin.svg" alt=""></a></li>
-        </ul> <p class="text-center text-body-secondary">© 2025 SYNCYOU, Inc</p> 
-    </footer>
-</div>
 </body>
 </html>

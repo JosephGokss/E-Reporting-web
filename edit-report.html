@@ -6,22 +6,36 @@
     <title>Edit Laporan | E-Report Sekolah</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="https://kit.fontawesome.com/41ede40f14.js" crossorigin="anonymous"></script>
     <style>
         :root {
             --primary-color: #4361ee;
             --secondary-color: #3a0ca3;
+            --bg-dark: #1a1d29;
+            --card-dark: #252836;
+            --text-dark: #e2e8f0;
         }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1d29 0%, #2d1b3d 100%);
         }
         
         .navbar {
             background: rgba(255, 255, 255, 0.95) !important;
             backdrop-filter: blur(10px);
             box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .dark-mode .navbar {
+            background: rgba(37, 40, 54, 0.95) !important;
         }
         
         .navbar-brand {
@@ -30,13 +44,27 @@
             font-size: 1.5rem;
         }
         
+        .dark-mode .navbar .nav-link {
+            color: var(--text-dark) !important;
+        }
+        
         .form-container {
             background: white;
             border-radius: 20px;
             padding: 3rem;
             box-shadow: 0 20px 60px rgba(0,0,0,0.2);
             margin: 2rem auto;
-            max-width: 700px;
+            max-width: 800px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .dark-mode .form-container {
+            background: var(--card-dark);
         }
         
         .form-title {
@@ -52,11 +80,22 @@
             margin-bottom: 0.5rem;
         }
         
+        .dark-mode .form-label {
+            color: var(--text-dark);
+        }
+        
         .form-control, .form-select {
             border: 2px solid #e9ecef;
             border-radius: 10px;
             padding: 0.75rem;
             transition: all 0.3s ease;
+        }
+        
+        .dark-mode .form-control,
+        .dark-mode .form-select {
+            background: #1a1d29;
+            border-color: #3a3d4a;
+            color: var(--text-dark);
         }
         
         .form-control:focus, .form-select:focus {
@@ -91,18 +130,48 @@
             background: #5a6268;
         }
         
-        .image-preview {
-            max-width: 100%;
-            max-height: 300px;
-            border-radius: 10px;
+        .image-preview-container {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
             margin-top: 1rem;
         }
         
-        .current-image {
-            max-width: 100%;
-            max-height: 200px;
+        .image-preview-item {
+            position: relative;
+            width: 150px;
+            height: 150px;
             border-radius: 10px;
-            margin-top: 0.5rem;
+            overflow: hidden;
+            border: 2px solid #e9ecef;
+        }
+        
+        .image-preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .image-remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(239, 71, 111, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .image-remove-btn:hover {
+            background: #ef476f;
+            transform: scale(1.1);
         }
         
         .required {
@@ -114,6 +183,46 @@
             padding: 1rem;
             border-radius: 10px;
             margin-top: 0.5rem;
+        }
+        
+        .dark-mode .image-info {
+            background: #1a1d29;
+        }
+        
+        .location-input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .location-input-group {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .dark-mode-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            box-shadow: 0 10px 30px rgba(67, 97, 238, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .dark-mode-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
         }
     </style>
 </head>
@@ -157,6 +266,22 @@
             <form id="edit-form">
                 <div class="mb-3">
                     <label class="form-label">
+                        <i class="bi bi-tag"></i> Kategori Fasilitas <span class="required">*</span>
+                    </label>
+                    <select id="category" class="form-select" required>
+                        <option value="">-- Pilih Kategori --</option>
+                        <option value="Listrik">⚡ Listrik</option>
+                        <option value="Furniture">🪑 Furniture</option>
+                        <option value="Bangunan">🏢 Bangunan</option>
+                        <option value="Sanitasi">🚿 Sanitasi</option>
+                        <option value="Teknologi">💻 Teknologi</option>
+                        <option value="Taman">🌳 Taman & Area Luar</option>
+                        <option value="Lainnya">📦 Lainnya</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">
                         Nama Fasilitas <span class="required">*</span>
                     </label>
                     <input 
@@ -168,6 +293,26 @@
                         maxlength="100"
                     >
                     <small class="text-muted">Min. 5 karakter, Max. 100 karakter</small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">
+                        <i class="bi bi-geo-alt"></i> Lokasi
+                    </label>
+                    <div class="location-input-group">
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="locationFloor" 
+                            placeholder="Lantai (contoh: Lantai 2)"
+                        >
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="locationRoom" 
+                            placeholder="Ruangan (contoh: Kelas 3A)"
+                        >
+                    </div>
                 </div>
                 
                 <div class="mb-3">
@@ -184,16 +329,31 @@
                     ></textarea>
                     <small class="text-muted">Min. 10 karakter, Max. 500 karakter</small>
                 </div>
-                
-                <div class="mb-3">
-                    <label class="form-label">
-                        Status <span class="required">*</span>
-                    </label>
-                    <select id="status" class="form-select" required>
-                        <option value="Baru">Baru</option>
-                        <option value="Diproses">Diproses</option>
-                        <option value="Selesai">Selesai</option>
-                    </select>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">
+                            <i class="bi bi-exclamation-triangle"></i> Tingkat Prioritas <span class="required">*</span>
+                        </label>
+                        <select id="priority" class="form-select" required>
+                            <option value="">-- Pilih Prioritas --</option>
+                            <option value="Rendah">Rendah - Tidak mengganggu aktivitas</option>
+                            <option value="Sedang">Sedang - Perlu perbaikan</option>
+                            <option value="Tinggi">Tinggi - Mengganggu aktivitas</option>
+                            <option value="Kritis">Kritis - Sangat mendesak!</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">
+                            Status <span class="required">*</span>
+                        </label>
+                        <select id="status" class="form-select" required>
+                            <option value="Baru">Baru</option>
+                            <option value="Diproses">Diproses</option>
+                            <option value="Selesai">Selesai</option>
+                        </select>
+                    </div>
                 </div>
                 
                 <div class="mb-4">
@@ -201,12 +361,12 @@
                         <i class="bi bi-camera"></i> Foto Fasilitas
                     </label>
                     
-                    <div id="currentImageContainer" style="display: none;">
+                    <div id="currentImagesContainer" style="display: none;">
                         <div class="image-info">
                             <p class="mb-2"><strong>Foto Saat Ini:</strong></p>
-                            <img id="currentImage" class="current-image" alt="Current">
+                            <div id="currentImagesList" class="image-preview-container"></div>
                             <p class="text-muted small mt-2 mb-0">
-                                <i class="bi bi-info-circle"></i> Upload foto baru untuk mengganti
+                                <i class="bi bi-info-circle"></i> Upload foto baru untuk menambah atau ganti foto
                             </p>
                         </div>
                     </div>
@@ -216,9 +376,10 @@
                         class="form-control mt-2" 
                         id="imageInput" 
                         accept="image/*"
+                        multiple
                     >
-                    <small class="text-muted">Format: JPG, PNG, GIF (Max. 2MB)</small>
-                    <img id="imagePreview" class="image-preview" style="display: none;" alt="Preview">
+                    <small class="text-muted">Format: JPG, PNG, GIF (Max. 2MB per foto, Max. 3 foto total)</small>
+                    <div id="newImagePreviewContainer" class="image-preview-container"></div>
                 </div>
                 
                 <div class="d-flex gap-2 justify-content-center">
@@ -233,6 +394,27 @@
         </div>
     </main>
 
+    <button class="dark-mode-toggle" id="darkModeToggle" title="Toggle Dark Mode">
+        <i class="bi bi-moon-fill"></i>
+    </button>
+
+    <!-- Footer -->
+<div class="container">
+     <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top"> 
+        <div class="col-md-4 d-flex align-items-center">
+            <a href="/" class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1" aria-label="Bootstrap">
+                 <svg class="bi" width="30" height="24" aria-hidden="true"><use xlink:href="#bootstrap"></use></svg>
+                 </a> <span class="mb-3 mb-md-0 text-body-secondary">© 2025 Company, Inc</span>
+                 </div>
+                  <ul class="nav col-md-4 justify-content-end list-unstyled d-flex"> 
+                    <li class="ms-3"><a class="link-body-emphasis" href="https://www.instagram.com/zaenthh/" aria-label="Instagram"><i class="fa-brands fa-instagram"></i><svg class="bi" width="24" height="24"><use xlink:href="#instagram"></use></svg></a></li>
+        <li class="ms-3"><a class="link-body-emphasis" href="https://www.facebook.com/profile.php?id=61579628405236" aria-label="Facebook"><i class="fa-brands fa-square-facebook"></i><svg class="bi" width="24" height="24" aria-hidden="true"><use xlink:href="#facebook"></use></svg></li>
+        <li class="ms-3"><a class="link-body-emphasis" href="https://www.linkedin.com/in/yusuf-idn-36714a37a/" aria-label="LinkedIn"><i class="fa-brands fa-square-linkedin"></i></i><svg class="bi" width="24" height="24" aria-hidden="true"><use xlink:href="#linkedIn"></use></svg></li>
+        <li class="ms-3"><a class="link-body-emphasis" href="https://github.com/JosephGokss" aria-label="Github"><i class="fa-brands fa-square-github"></i></i><svg class="bi" width="24" height="24" aria-hidden="true"><use xlink:href="#Github"></use></svg></li>
+                 </ul>
+                 </footer>
+                 </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const params = new URLSearchParams(window.location.search);
@@ -245,47 +427,113 @@
             window.location.href = 'reports.html';
         }
 
+        let currentImages = report.images || (report.image ? [report.image] : []);
+        let newImages = [];
+        const maxTotalImages = 3;
+
+        // Dark Mode
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+        if (isDarkMode) {
+            document.body.classList.add('dark-mode');
+            document.getElementById('darkModeToggle').innerHTML = '<i class="bi bi-sun-fill"></i>';
+        }
+
+        document.getElementById('darkModeToggle').addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDark);
+            document.getElementById('darkModeToggle').innerHTML = isDark ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-fill"></i>';
+        });
+
         // Tampilkan data lama ke form
         document.getElementById('facilityName').value = report.name;
         document.getElementById('description').value = report.description;
         document.getElementById('status').value = report.status;
+        document.getElementById('category').value = report.category || '';
+        document.getElementById('priority').value = report.priority || 'Sedang';
+        
+        if (report.location) {
+            document.getElementById('locationFloor').value = report.location.floor || '';
+            document.getElementById('locationRoom').value = report.location.room || '';
+        }
 
-        // Tampilkan gambar saat ini jika ada
-        if (report.image) {
-            document.getElementById('currentImageContainer').style.display = 'block';
-            document.getElementById('currentImage').src = report.image;
+        // Tampilkan gambar saat ini
+        if (currentImages.length > 0) {
+            document.getElementById('currentImagesContainer').style.display = 'block';
+            renderCurrentImages();
+        }
+
+        function renderCurrentImages() {
+            const container = document.getElementById('currentImagesList');
+            container.innerHTML = currentImages.map((img, index) => `
+                <div class="image-preview-item">
+                    <img src="${img}" alt="Current ${index + 1}">
+                    <button type="button" class="image-remove-btn" onclick="removeCurrentImage(${index})">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function removeCurrentImage(index) {
+            currentImages.splice(index, 1);
+            renderCurrentImages();
+            if (currentImages.length === 0) {
+                document.getElementById('currentImagesContainer').style.display = 'none';
+            }
         }
 
         // Preview gambar baru
-        document.getElementById('imageInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                // Validasi ukuran file (max 2MB)
-                if (file.size > 2 * 1024 * 1024) {
-                    alert('⚠️ Ukuran file terlalu besar! Maksimal 2MB.');
-                    this.value = '';
-                    document.getElementById('imagePreview').style.display = 'none';
-                    return;
-                }
-                
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.getElementById('imagePreview');
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
+        document.getElementById('imageInput').addEventListener('change', async function(e) {
+            const files = Array.from(e.target.files);
+            const totalImages = currentImages.length + newImages.length + files.length;
+            
+            if (totalImages > maxTotalImages) {
+                alert(`⚠️ Maksimal ${maxTotalImages} foto total!`);
+                this.value = '';
+                return;
             }
+
+            for (let file of files) {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('⚠️ Ukuran file ' + file.name + ' terlalu besar! Maksimal 2MB.');
+                    continue;
+                }
+
+                const base64 = await toBase64(file);
+                newImages.push(base64);
+            }
+
+            renderNewImages();
+            this.value = '';
         });
 
+        function renderNewImages() {
+            const container = document.getElementById('newImagePreviewContainer');
+            container.innerHTML = newImages.map((img, index) => `
+                <div class="image-preview-item">
+                    <img src="${img}" alt="New ${index + 1}">
+                    <button type="button" class="image-remove-btn" onclick="removeNewImage(${index})">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function removeNewImage(index) {
+            newImages.splice(index, 1);
+            renderNewImages();
+        }
+
         // Submit form
-        document.getElementById('edit-form').addEventListener('submit', async function(e) {
+        document.getElementById('edit-form').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const facilityName = document.getElementById('facilityName').value.trim();
             const description = document.getElementById('description').value.trim();
+            const category = document.getElementById('category').value;
+            const priority = document.getElementById('priority').value;
             
-            // Validasi
             if (facilityName.length < 5) {
                 alert('⚠️ Nama fasilitas minimal 5 karakter!');
                 return;
@@ -295,25 +543,66 @@
                 alert('⚠️ Deskripsi minimal 10 karakter!');
                 return;
             }
+
+            if (!category) {
+                alert('⚠️ Pilih kategori fasilitas!');
+                return;
+            }
+
+            if (!priority) {
+                alert('⚠️ Pilih tingkat prioritas!');
+                return;
+            }
             
             // Update data
             report.name = facilityName;
             report.description = description;
             report.status = document.getElementById('status').value;
+            report.category = category;
+            report.priority = priority;
+            report.location = {
+                floor: document.getElementById('locationFloor').value.trim(),
+                room: document.getElementById('locationRoom').value.trim()
+            };
             
-            // Update gambar jika ada file baru
-            const fileInput = document.getElementById('imageInput');
-            if (fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                report.image = await toBase64(file);
-            }
+            // Gabungkan gambar lama dan baru
+            const allImages = [...currentImages, ...newImages];
+            report.images = allImages;
             
             // Simpan ke localStorage
             localStorage.setItem('reports', JSON.stringify(reports));
             
-            alert('✅ Perubahan berhasil disimpan!');
-            window.location.href = 'report-detail.html?id=' + report.id;
+            // Success animation
+            showSuccessAnimation();
+            
+            setTimeout(() => {
+                window.location.href = 'report-detail.html?id=' + report.id;
+            }, 1500);
         });
+
+        function showSuccessAnimation() {
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+                animation: fadeIn 0.3s ease;
+            `;
+            overlay.innerHTML = `
+                <div style="text-align: center; color: white;">
+                    <i class="bi bi-check-circle" style="font-size: 5rem; color: #06d6a0;"></i>
+                    <h2 style="margin-top: 1rem;">Perubahan Berhasil Disimpan!</h2>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+        }
 
         function toBase64(file) {
             return new Promise((resolve, reject) => {

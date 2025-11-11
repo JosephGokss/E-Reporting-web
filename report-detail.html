@@ -6,10 +6,14 @@
     <title>Detail Laporan | E-Report Sekolah</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="https://kit.fontawesome.com/41ede40f14.js" crossorigin="anonymous"></script>
     <style>
         :root {
             --primary-color: #4361ee;
             --secondary-color: #3a0ca3;
+            --bg-dark: #1a1d29;
+            --card-dark: #252836;
+            --text-dark: #e2e8f0;
         }
         
         body {
@@ -17,12 +21,22 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding-bottom: 3rem;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1d29 0%, #2d1b3d 100%);
         }
         
         .navbar {
             background: rgba(255, 255, 255, 0.95) !important;
             backdrop-filter: blur(10px);
             box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .dark-mode .navbar {
+            background: rgba(37, 40, 54, 0.95) !important;
         }
         
         .navbar-brand {
@@ -31,19 +45,64 @@
             font-size: 1.5rem;
         }
         
+        .dark-mode .navbar .nav-link {
+            color: var(--text-dark) !important;
+        }
+        
+        .dark-mode .navbar .nav-link.active {
+            color: var(--primary-color) !important;
+        }
+        
         .detail-card {
             background: white;
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 20px 60px rgba(0,0,0,0.2);
             margin: 2rem auto;
-            max-width: 900px;
+            max-width: 1000px;
+            animation: fadeIn 0.5s ease;
         }
         
-        .detail-card img {
-            width: 100%;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .dark-mode .detail-card {
+            background: var(--card-dark);
+        }
+        
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 0.5rem;
             max-height: 500px;
+        }
+        
+        .image-gallery img {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        
+        .image-gallery.single-image {
+            grid-template-columns: 1fr;
+            max-height: 500px;
+        }
+        
+        .image-gallery.two-images {
+            grid-template-columns: 1fr 1fr;
+        }
+        
+        .image-gallery.three-images {
+            grid-template-columns: 2fr 1fr;
+        }
+        
+        .image-gallery.three-images img:first-child {
+            grid-row: span 2;
         }
         
         .detail-content {
@@ -57,11 +116,36 @@
             margin-bottom: 1rem;
         }
         
+        .dark-mode .report-title {
+            color: var(--text-dark);
+        }
+        
         .badge-status {
             padding: 0.75rem 1.5rem;
             border-radius: 50px;
             font-weight: 600;
             font-size: 1rem;
+        }
+        
+        .badge-priority {
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .priority-Rendah { background: #06d6a0; color: white; }
+        .priority-Sedang { background: #ffd60a; color: #2d3748; }
+        .priority-Tinggi { background: #ff9500; color: white; }
+        .priority-Kritis { 
+            background: #ef476f; 
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
         
         .btn-custom {
@@ -106,6 +190,27 @@
             margin: 1.5rem 0;
         }
         
+        .dark-mode .info-section {
+            background: #536eda;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 0;
+            color: #20272d;
+        }
+        
+        .dark-mode .info-item {
+            color: #232b38;
+        }
+        
+        .info-item i {
+            color: var(--primary-color);
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+        }
+        
         .no-image-placeholder {
             background: linear-gradient(135deg, #e2e8f0, #cbd5e0);
             height: 400px;
@@ -130,11 +235,146 @@
             margin: 2rem auto;
             max-width: 600px;
         }
+        
+        .dark-mode .alert-not-found {
+            background: var(--card-dark);
+        }
 
         .alert-not-found i {
             font-size: 5rem;
             color: #ffd60a;
             margin-bottom: 1rem;
+        }
+        
+        .category-badge {
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--primary-color);
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .dark-mode .category-badge {
+            background: rgba(67, 97, 238, 0.2);
+        }
+        
+        .location-badge {
+            background: rgba(255, 214, 10, 0.2);
+            color: #d4a200;
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        /* Lightbox */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .lightbox.active {
+            display: flex;
+        }
+        
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        }
+        
+        .lightbox-content img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: white;
+            color: #2d3748;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .lightbox-close:hover {
+            background: #ef476f;
+            color: white;
+            transform: rotate(90deg);
+        }
+        
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .lightbox-nav:hover {
+            background: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .lightbox-prev {
+            left: 20px;
+        }
+        
+        .lightbox-next {
+            right: 20px;
+        }
+        
+        .dark-mode-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            box-shadow: 0 10px 30px rgba(67, 97, 238, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .dark-mode-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
         }
     </style>
 </head>
@@ -173,8 +413,64 @@
         <div id="detail-container"></div>
     </div>
 
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" onclick="closeLightbox()">
+            <i class="bi bi-x"></i>
+        </button>
+        <button class="lightbox-nav lightbox-prev" onclick="navigateLightbox(-1)">
+            <i class="bi bi-chevron-left"></i>
+        </button>
+        <div class="lightbox-content">
+            <img id="lightboxImage" src="" alt="Lightbox">
+        </div>
+        <button class="lightbox-nav lightbox-next" onclick="navigateLightbox(1)">
+            <i class="bi bi-chevron-right"></i>
+        </button>
+    </div>
+
+    <button class="dark-mode-toggle" id="darkModeToggle" title="Toggle Dark Mode">
+        <i class="bi bi-moon-fill"></i>
+    </button>
+
+    <!-- Footer -->
+<div class="container">
+     <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+        <div class="col-md-4 d-flex align-items-center">
+        <a href="/" class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1" aria-label="Bootstrap">
+            <svg class="bi" width="30" height="24" aria-hidden="true"><use xlink:href="#bootstrap"></use>
+            </svg>
+        </a>
+        <span class="mb-3 mb-md-0 text-body-secondary">© 2025 Company, Inc</span>
+    </div>
+     <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+        <li class="ms-3"><a class="link-body-emphasis" href="https://www.instagram.com/zaenthh/" aria-label="Instagram"><i class="fa-brands fa-instagram"></i><svg class="bi" width="24" height="24"><use xlink:href="#instagram"></use></svg></a></li>
+        <li class="ms-3"><a class="link-body-emphasis" href="https://www.facebook.com/profile.php?id=61579628405236" aria-label="Facebook"><i class="fa-brands fa-square-facebook"></i><svg class="bi" width="24" height="24" aria-hidden="true"><use xlink:href="#facebook"></use></svg></li>
+        <li class="ms-3"><a class="link-body-emphasis" href="https://www.linkedin.com/in/yusuf-idn-36714a37a/" aria-label="LinkedIn"><i class="fa-brands fa-square-linkedin"></i></i><svg class="bi" width="24" height="24" aria-hidden="true"><use xlink:href="#linkedIn"></use></svg></li>
+        <li class="ms-3"><a class="link-body-emphasis" href="https://github.com/JosephGokss" aria-label="Github"><i class="fa-brands fa-square-github"></i></i><svg class="bi" width="24" height="24" aria-hidden="true"><use xlink:href="#Github"></use></svg></li>
+     </ul>
+     </footer>
+     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        let currentImages = [];
+        let currentImageIndex = 0;
+
+        // Dark Mode
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+        if (isDarkMode) {
+            document.body.classList.add('dark-mode');
+            document.getElementById('darkModeToggle').innerHTML = '<i class="bi bi-sun-fill"></i>';
+        }
+
+        document.getElementById('darkModeToggle').addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDark);
+            document.getElementById('darkModeToggle').innerHTML = isDark ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-fill"></i>';
+        });
+
         // Ambil data dari localStorage
         let reports = JSON.parse(localStorage.getItem('reports')) || [];
 
@@ -205,12 +501,33 @@
                 'Selesai': 'success'
             };
 
-            const imageHTML = report.image 
-                ? `<img src="${report.image}" alt="${report.name}">` 
-                : `<div class="no-image-placeholder">
-                    <i class="bi bi-image"></i>
-                    <p class="mb-0 fw-semibold">Tidak ada foto</p>
-                   </div>`;
+            const images = report.images || (report.image ? [report.image] : []);
+            currentImages = images;
+            
+            let imageHTML;
+            if (images.length === 0) {
+                imageHTML = `
+                    <div class="no-image-placeholder">
+                        <i class="bi bi-image"></i>
+                        <p class="mb-0 fw-semibold">Tidak ada foto</p>
+                    </div>
+                `;
+            } else {
+                const galleryClass = images.length === 1 ? 'single-image' : 
+                                    images.length === 2 ? 'two-images' : 
+                                    'three-images';
+                imageHTML = `
+                    <div class="image-gallery ${galleryClass}">
+                        ${images.map((img, index) => `
+                            <img src="${img}" alt="${report.name}" onclick="openLightbox(${index})">
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            const locationText = report.location && (report.location.floor || report.location.room) 
+                ? `${report.location.floor || ''} ${report.location.room || ''}`.trim()
+                : '';
 
             container.innerHTML = `
                 <div class="detail-card">
@@ -218,20 +535,34 @@
                     <div class="detail-content">
                         <div class="d-flex justify-content-between align-items-start mb-3 flex-wrap gap-3">
                             <h2 class="report-title mb-0">${report.name}</h2>
-                            <span class="badge badge-status bg-${statusColor[report.status]}">
-                                ${report.status}
-                            </span>
+                            <div class="d-flex gap-2 flex-wrap">
+                                ${report.priority ? `<span class="badge-priority priority-${report.priority}">${report.priority}</span>` : ''}
+                                <span class="badge badge-status bg-${statusColor[report.status]}">
+                                    ${report.status}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3 d-flex gap-2 flex-wrap">
+                            ${report.category ? `<span class="category-badge"><i class="bi bi-tag"></i> ${report.category}</span>` : ''}
+                            ${locationText ? `<span class="location-badge"><i class="bi bi-geo-alt"></i> ${locationText}</span>` : ''}
                         </div>
                         
                         <div class="info-section">
-                            <p class="mb-2">
-                                <i class="bi bi-calendar-check text-primary"></i> 
-                                <strong>Dilaporkan:</strong> ${formatDate(report.date)}
-                            </p>
-                            <p class="mb-0">
-                                <i class="bi bi-hash text-primary"></i> 
-                                <strong>ID Laporan:</strong> #${report.id}
-                            </p>
+                            <div class="info-item">
+                                <i class="bi bi-calendar-check"></i>
+                                <strong>Dilaporkan:</strong> &nbsp;${formatDate(report.date)}
+                            </div>
+                            <div class="info-item">
+                                <i class="bi bi-hash"></i>
+                                <strong>ID Laporan:</strong> &nbsp;#${report.id}
+                            </div>
+                            ${images.length > 0 ? `
+                            <div class="info-item">
+                                <i class="bi bi-camera"></i>
+                                <strong>Foto:</strong> &nbsp;${images.length} foto
+                            </div>
+                            ` : ''}
                         </div>
 
                         <h5 class="mt-4 mb-3">
@@ -270,6 +601,36 @@
                 </div>
             `;
         }
+
+        // Lightbox functions
+        function openLightbox(index) {
+            currentImageIndex = index;
+            document.getElementById('lightboxImage').src = currentImages[index];
+            document.getElementById('lightbox').classList.add('active');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+        }
+
+        function navigateLightbox(direction) {
+            currentImageIndex += direction;
+            if (currentImageIndex < 0) currentImageIndex = currentImages.length - 1;
+            if (currentImageIndex >= currentImages.length) currentImageIndex = 0;
+            document.getElementById('lightboxImage').src = currentImages[currentImageIndex];
+        }
+
+        // Close lightbox with ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') navigateLightbox(-1);
+            if (e.key === 'ArrowRight') navigateLightbox(1);
+        });
+
+        // Close lightbox when clicking outside image
+        document.getElementById('lightbox').addEventListener('click', (e) => {
+            if (e.target.id === 'lightbox') closeLightbox();
+        });
 
         function deleteReport(id) {
             if (confirm('⚠️ Apakah Anda yakin ingin menghapus laporan ini?\n\nLaporan yang dihapus tidak dapat dikembalikan.')) {

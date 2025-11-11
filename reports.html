@@ -6,10 +6,14 @@
     <title>Daftar Laporan | E-Report Sekolah</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="https://kit.fontawesome.com/41ede40f14.js" crossorigin="anonymous"></script>
     <style>
         :root {
             --primary-color: #4361ee;
             --secondary-color: #3a0ca3;
+            --bg-dark: #1a1d29;
+            --card-dark: #252836;
+            --text-dark: #e2e8f0;
         }
         
         body {
@@ -17,18 +21,36 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding-bottom: 3rem;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1d29 0%, #2d1b3d 100%);
         }
         
         .navbar {
             background: rgba(255, 255, 255, 0.95) !important;
             backdrop-filter: blur(10px);
             box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .dark-mode .navbar {
+            background: rgba(37, 40, 54, 0.95) !important;
         }
         
         .navbar-brand {
             font-weight: 700;
             color: var(--primary-color) !important;
             font-size: 1.5rem;
+        }
+        
+        .dark-mode .navbar .nav-link {
+            color: var(--text-dark) !important;
+        }
+        
+        .dark-mode .navbar .nav-link.active {
+            color: var(--primary-color) !important;
         }
         
         .search-card {
@@ -38,6 +60,22 @@
             padding: 1.5rem;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             margin-bottom: 2rem;
+            animation: slideDown 0.5s ease;
+        }
+        
+        .dark-mode .search-card {
+            background: rgba(37, 40, 54, 0.95);
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         .page-header {
@@ -61,6 +99,22 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             height: 100%;
+            animation: fadeInUp 0.5s ease;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .dark-mode .report-card {
+            background: var(--card-dark);
         }
         
         .report-card:hover {
@@ -85,10 +139,18 @@
             margin-bottom: 0.5rem;
         }
         
+        .dark-mode .report-title {
+            color: var(--text-dark);
+        }
+        
         .report-description {
             color: #6c757d;
             font-size: 0.9rem;
             margin-bottom: 1rem;
+        }
+        
+        .dark-mode .report-description {
+            color: #94a3b8;
         }
         
         .badge-status {
@@ -96,6 +158,27 @@
             border-radius: 50px;
             font-weight: 600;
             font-size: 0.85rem;
+        }
+        
+        .badge-priority {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .priority-Rendah { background: #06d6a0; color: white; }
+        .priority-Sedang { background: #ffd60a; color: #2d3748; }
+        .priority-Tinggi { background: #ff9500; color: white; }
+        .priority-Kritis { 
+            background: #ef476f; 
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
         
         .btn-custom {
@@ -128,6 +211,10 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.1);
         }
         
+        .dark-mode .empty-state {
+            background: var(--card-dark);
+        }
+        
         .empty-state i {
             font-size: 5rem;
             color: #cbd5e0;
@@ -157,6 +244,68 @@
             border-radius: 50px;
             display: inline-block;
             margin-bottom: 1rem;
+        }
+        
+        .category-badge {
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--primary-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .dark-mode .category-badge {
+            background: rgba(67, 97, 238, 0.2);
+        }
+        
+        .dark-mode-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            box-shadow: 0 10px 30px rgba(67, 97, 238, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .dark-mode-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+        }
+        
+        .image-gallery {
+            display: flex;
+            gap: 0.25rem;
+            overflow: hidden;
+        }
+        
+        .image-gallery img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .image-gallery.multiple-images img {
+            width: 50%;
+        }
+        
+        .location-badge {
+            background: rgba(255, 214, 10, 0.2);
+            color: #d4a200;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -203,17 +352,38 @@
 
         <!-- Search & Filter Section -->
         <div class="search-card">
-            <h5 class="mb-3"><i class="bi bi-search"></i> Cari & Filter Laporan</h5>
+            <h5 class="mb-3"><i class="bi bi-funnel"></i> Filter & Pencarian</h5>
             <div class="row g-3">
-                <div class="col-md-5">
+                <div class="col-md-3">
                     <input 
                         type="text" 
                         class="form-control" 
                         id="searchInput" 
-                        placeholder="Cari berdasarkan nama atau deskripsi..."
+                        placeholder="🔍 Cari laporan..."
                     >
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
+                    <select id="categoryFilter" class="form-select">
+                        <option value="">Semua Kategori</option>
+                        <option value="Listrik">⚡ Listrik</option>
+                        <option value="Furniture">🪑 Furniture</option>
+                        <option value="Bangunan">🏢 Bangunan</option>
+                        <option value="Sanitasi">🚿 Sanitasi</option>
+                        <option value="Teknologi">💻 Teknologi</option>
+                        <option value="Taman">🌳 Taman</option>
+                        <option value="Lainnya">📦 Lainnya</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select id="priorityFilter" class="form-select">
+                        <option value="">Semua Prioritas</option>
+                        <option value="Rendah">Rendah</option>
+                        <option value="Sedang">Sedang</option>
+                        <option value="Tinggi">Tinggi</option>
+                        <option value="Kritis">Kritis</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
                     <select id="statusFilter" class="form-select">
                         <option value="">Semua Status</option>
                         <option value="Baru">Baru</option>
@@ -221,7 +391,7 @@
                         <option value="Selesai">Selesai</option>
                     </select>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <button class="btn btn-primary me-2" type="button" id="searchButton">
                         <i class="bi bi-search"></i> Cari
                     </button>
@@ -239,12 +409,46 @@
         <div id="report-list" class="row g-4"></div>
     </main>
 
+    <button class="dark-mode-toggle" id="darkModeToggle" title="Toggle Dark Mode">
+        <i class="bi bi-moon-fill"></i>
+    </button>
+
+    <!-- Footer -->
+<div class="container">
+     <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+         <div class="col-md-4 d-flex align-items-center">
+             <a href="/" class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1" aria-label="Bootstrap"> <svg class="bi" width="30" height="24" aria-hidden="true"><use xlink:href="#bootstrap"></use></svg> </a>
+              <span class="mb-3 mb-md-0 text-body-secondary">© 2025 Company, Inc</span>
+             </div> 
+             <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+                 <li class="ms-3"><a class="link-body-emphasis" href="https://www.instagram.com/zaenthh/" aria-label="Instagram"><i class="fa-brands fa-instagram"></i><svg class="bi" width="24" height="24"><use xlink:href="#instagram"></use></svg></a></li>
+        <li class="ms-3"><a class="link-body-emphasis" href="https://www.facebook.com/profile.php?id=61579628405236" aria-label="Facebook"><i class="fa-brands fa-square-facebook"></i><svg class="bi" width="24" height="24" aria-hidden="true"><use xlink:href="#facebook"></use></svg></li>
+        <li class="ms-3"><a class="link-body-emphasis" href="https://www.linkedin.com/in/yusuf-idn-36714a37a/" aria-label="LinkedIn"><i class="fa-brands fa-square-linkedin"></i></i><svg class="bi" width="24" height="24" aria-hidden="true"><use xlink:href="#linkedIn"></use></svg></li>
+        <li class="ms-3"><a class="link-body-emphasis" href="https://github.com/JosephGokss" aria-label="Github"><i class="fa-brands fa-square-github"></i></i><svg class="bi" width="24" height="24" aria-hidden="true"><use xlink:href="#Github"></use></svg></li>
+                 </ul>
+                 </footer>
+                 </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const container = document.getElementById('report-list');
         const resultCountEl = document.getElementById('resultCount');
         let allReports = JSON.parse(localStorage.getItem('reports')) || [];
         let filteredReports = [...allReports];
+
+        // Dark Mode
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+        if (isDarkMode) {
+            document.body.classList.add('dark-mode');
+            document.getElementById('darkModeToggle').innerHTML = '<i class="bi bi-sun-fill"></i>';
+        }
+
+        document.getElementById('darkModeToggle').addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDark);
+            document.getElementById('darkModeToggle').innerHTML = isDark ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-fill"></i>';
+        });
 
         function formatDate(dateString) {
             const date = new Date(dateString);
@@ -297,16 +501,36 @@
                 resultCountEl.style.display = 'none';
             }
             
-            // Urutkan laporan dari yang terbaru
-            reports.sort((a, b) => new Date(b.date) - new Date(a.date));
+            // Urutkan: Kritis > Tinggi > Sedang > Rendah, lalu dari terbaru
+            const priorityOrder = { 'Kritis': 0, 'Tinggi': 1, 'Sedang': 2, 'Rendah': 3 };
+            reports.sort((a, b) => {
+                const priorityDiff = (priorityOrder[a.priority] || 999) - (priorityOrder[b.priority] || 999);
+                if (priorityDiff !== 0) return priorityDiff;
+                return new Date(b.date) - new Date(a.date);
+            });
             
-            reports.forEach(r => {
-                const imageHTML = r.image 
-                    ? `<img src="${r.image}" alt="${r.name}">` 
-                    : `<div class="no-image"><i class="bi bi-image"></i></div>`;
+            reports.forEach((r, index) => {
+                const images = r.images || (r.image ? [r.image] : []);
+                let imageHTML;
+                
+                if (images.length === 0) {
+                    imageHTML = `<div class="no-image"><i class="bi bi-image"></i></div>`;
+                } else if (images.length === 1) {
+                    imageHTML = `<img src="${images[0]}" alt="${r.name}">`;
+                } else {
+                    imageHTML = `
+                        <div class="image-gallery multiple-images">
+                            ${images.slice(0, 2).map(img => `<img src="${img}" alt="${r.name}">`).join('')}
+                        </div>
+                    `;
+                }
+                
+                const locationText = r.location && (r.location.floor || r.location.room) 
+                    ? `${r.location.floor || ''} ${r.location.room || ''}`.trim()
+                    : '';
                 
                 container.innerHTML += `
-                    <div class="col-lg-4 col-md-6">
+                    <div class="col-lg-4 col-md-6" style="animation-delay: ${index * 0.1}s">
                         <div class="report-card">
                             ${imageHTML}
                             <div class="card-body">
@@ -316,7 +540,12 @@
                                         ${r.status}
                                     </span>
                                 </div>
-                                <p class="report-date">
+                                <div class="mb-2">
+                                    ${r.category ? `<span class="category-badge me-2">${r.category}</span>` : ''}
+                                    ${r.priority ? `<span class="badge-priority priority-${r.priority}">${r.priority}</span>` : ''}
+                                </div>
+                                ${locationText ? `<div class="mb-2"><span class="location-badge"><i class="bi bi-geo-alt"></i> ${locationText}</span></div>` : ''}
+                                <p class="report-date mb-2">
                                     <i class="bi bi-calendar3"></i> ${formatDate(r.date)}
                                 </p>
                                 <p class="report-description">
@@ -339,14 +568,18 @@
 
         function performSearch() {
             const searchValue = document.getElementById('searchInput').value.toLowerCase().trim();
+            const categoryValue = document.getElementById('categoryFilter').value;
+            const priorityValue = document.getElementById('priorityFilter').value;
             const statusValue = document.getElementById('statusFilter').value;
 
             filteredReports = allReports.filter(r => {
                 const matchSearch = !searchValue || 
                     r.name.toLowerCase().includes(searchValue) || 
                     r.description.toLowerCase().includes(searchValue);
+                const matchCategory = !categoryValue || r.category === categoryValue;
+                const matchPriority = !priorityValue || r.priority === priorityValue;
                 const matchStatus = !statusValue || r.status === statusValue;
-                return matchSearch && matchStatus;
+                return matchSearch && matchCategory && matchPriority && matchStatus;
             });
 
             renderReports(filteredReports);
@@ -354,6 +587,8 @@
 
         function resetSearch() {
             document.getElementById('searchInput').value = '';
+            document.getElementById('categoryFilter').value = '';
+            document.getElementById('priorityFilter').value = '';
             document.getElementById('statusFilter').value = '';
             filteredReports = [...allReports];
             renderReports(filteredReports);
@@ -363,12 +598,16 @@
             if (confirm('⚠️ Apakah Anda yakin ingin menghapus laporan ini?')) {
                 allReports = allReports.filter(r => r.id !== id);
                 localStorage.setItem('reports', JSON.stringify(allReports));
-                
-                // Update filtered reports
                 filteredReports = filteredReports.filter(r => r.id !== id);
-                
                 renderReports(filteredReports);
-                alert('✅ Laporan berhasil dihapus!');
+                
+                // Success notification
+                const toast = document.createElement('div');
+                toast.className = 'result-count';
+                toast.style.cssText = 'position: fixed; top: 100px; right: 30px; z-index: 9999;';
+                toast.innerHTML = '<i class="bi bi-check-circle"></i> Laporan berhasil dihapus!';
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
             }
         }
 
@@ -378,6 +617,8 @@
         document.getElementById('searchInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') performSearch();
         });
+        document.getElementById('categoryFilter').addEventListener('change', performSearch);
+        document.getElementById('priorityFilter').addEventListener('change', performSearch);
         document.getElementById('statusFilter').addEventListener('change', performSearch);
 
         // Initial render
