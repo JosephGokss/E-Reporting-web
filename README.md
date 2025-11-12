@@ -22,7 +22,7 @@
 [![Status](https://img.shields.io/badge/status-production-success.svg)]()
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-[Live Demo](#) • [Documentation](#) • [Report Bug](https://github.com/yourusername/e-report-school/issues) • [Request Feature](https://github.com/yourusername/e-report-school/issues)
+[Live Demo](#) • [Documentation](#) • [Report Bug](https://github.com/yourusername/e-report-school/issues) • [Request Feature]([https://github.com/yourusername/e-report-school/issues](https://github.com/JosephGokss/E-Reporting-web/edit/main/README.md))
 
 ![Dashboard Preview](https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-Miv9PbmqQqW5fIcUyLaO6j4ADU9BgC.png)
 
